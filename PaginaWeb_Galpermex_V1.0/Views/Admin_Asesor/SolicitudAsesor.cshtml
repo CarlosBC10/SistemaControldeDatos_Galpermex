@@ -1,0 +1,224 @@
+﻿
+@{
+    ViewBag.Title = "SolicitudAsesor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card secondary-font-regular">
+    <div class="card-header">
+        <i class="fas fa-users fa-lg m-1"></i> Solicitudes de Asesoria.
+    </div>
+
+    <div class="card-body">
+
+        <table id="tablaContacto" class="display cell-border" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre y apellido</th>
+                    <th>Asunto</th>
+                    <th>Correo</th>
+                    <th>Telefono</th>
+                    <th>Fecha Solicitud</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="FormModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Mensaje</h1>
+                <button type="button" class="btn-close bg-danger" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+
+                    <div class="col-sm-6">
+                        <label for="exampleFormControlInput1" class="form-label">Nombre</label>
+                        <h3 class="form-text" id="txtNombre"></h3>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="exampleFormControlInput1" class="form-label">Apellidos</label>
+                        <h3 class="form-text" id="txtApellidos"></h3>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <label for="exampleFormControlInput1" class="form-label">Asunto</label>
+                        <h3 class="form-text" id="txtAsunto"></h3>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <label for="exampleFormControlInput1" class="form-label">Mensaje</label>
+                        <p id="txtMensaje" class="form-text"></p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+
+    <script>
+
+        var tablaData;
+        var filaSeleccionada;
+
+        tablaData = $("#tablaContacto").DataTable({
+
+            responsive: true,
+            /*ordering: true,*/
+            order: [[5, 'desc']], // Columna 6 es FechaRegistro, 'desc' para ordenar descendente
+            "ajax": {
+                url: '@Url.Action("ListarContactoAsesor", "Admin_Asesor")',
+                type: "GET",
+                dataType: "json",
+            },
+            "columns": [
+                { "data": "ContactoID" },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return row.Nombre + ' ' + row.Apellidos;
+                    }
+                },
+                { "data": "Asunto.Asunto" },
+                { "data": "Correo" },
+                { "data": "Telefono" },
+                {
+                    data: "FechaRegistro",
+                    render: function (data, type, row) {
+                        return moment(data).format("DD/MM/YYYY HH:mm:ss");
+                    }
+                },
+                {
+                    data: "status",
+                    render: function (data, type, row) {
+                        var icono = data ? 'fa-envelope-open' : 'fa-envelope'; // Determinar el ícono según el estado del mensaje
+                        return '<button type="button" class="btn btn-info btn-sm btn-Mensaje"><i class="fas ' + icono + ' fa-lg" style="color: #ffffff"></i></button>' +
+                                //Boton para borrar mensajes
+                               '<button type="button" class="btn btn-danger btn-sm ms-2 btn-Eliminar"><i class="fas fa-trash fa-lg" style="color: #ffffff"></button>';
+                    },
+                    "orderable": false,
+                    "searchable" : false,
+                    "width": "95px"
+                }
+            ],
+
+            "language": {
+                "url": '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
+            },
+
+        });
+
+        function AbrirModalContacto(json) {
+
+            if (json != null) {
+                $("#txtNombre").text(json.Nombre);
+                $("#txtApellidos").text(json.Apellidos);
+                $("#txtAsunto").text(json.Asunto.Asunto);
+                $("#txtMensaje").text(json.Mensaje);
+            }
+
+            $('#FormModal').modal("show");
+
+        }
+
+        //$("#tablaContacto tbody").on("click", '.btn-Mensaje', function () {
+
+        //    filaSeleccionada = $(this).closest("tr");
+
+        //    var data = tablaData.row(filaSeleccionada).data();
+
+        //    AbrirModalContacto(data)
+        //})
+
+        $("#tablaContacto tbody").on("click", '.btn-Mensaje', function () {
+            filaSeleccionada = $(this).closest("tr");
+            var data = tablaData.row(filaSeleccionada).data();
+
+            // Verificar si el mensaje está leído
+            if (!data.status) {
+                // Llamar a la función para marcar el mensaje como leído solo si no está leído
+                MarcarMensajeLeido(data.ContactoID);
+                AbrirModalContacto(data);
+            } else {
+                // Si el mensaje ya está leído, abrir el modal directamente
+                AbrirModalContacto(data);
+            }
+
+        });
+
+
+        function MarcarMensajeLeido(idMensaje) {
+            $.ajax({
+                url: '@Url.Action("MsgLeido", "Admin_Asesor")',
+                type: "POST",
+                data: { id: idMensaje },
+                dataType: "json",
+                success: function (data) {
+                    // Actualizar el ícono del botón si el mensaje se marcó como leído correctamente
+                    tablaData.ajax.reload(null, false); // Recargar la tabla sin perder la paginación actual
+                },
+                error: function (error) {
+                    // Manejar errores
+                }
+            });
+        }
+
+    </script>
+
+    <script>
+        // Agregar un evento click al botón de eliminar mensaje
+        $("#tablaContacto tbody").on("click", '.btn-Eliminar', function () {
+            filaSeleccionada = $(this).closest("tr");
+            var data = tablaData.row(filaSeleccionada).data();
+            var confirmar = confirm("¿Estás seguro de que deseas eliminar este mensaje?");
+
+            if (confirmar) {
+                // Llamar al método del controlador para eliminar el mensaje
+                EliminarMensaje(data.ContactoID);
+            }
+        });
+
+        function EliminarMensaje(idMensaje) {
+            $.ajax({
+                url: '@Url.Action("EliminarMSG", "Admin_Asesor")',
+                type: "POST",
+                data: { id: idMensaje },
+                dataType: "json",
+                success: function (data) {
+                    if (data) {
+                        alert("El mensaje se eliminó exitosamente.");
+                        tablaData.ajax.reload(null, false); // Recargar la tabla sin perder la paginación actual
+                    } else {
+                        alert("Error al intentar eliminar el mensaje.");
+                    }
+                },
+                error: function (error) {
+                    alert("Error al intentar eliminar el mensaje.");
+                }
+            });
+        }
+    </script>
+
+}

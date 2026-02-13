@@ -1,0 +1,158 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Pagina Inicio</title>
+    <link rel="icon" type="image/png" href="~/Content/Imag/LogosEmpresa/Icono Galpermex.png">
+    @Styles.Render("~/Content/css")
+
+    <!-- Enlaces a funtes de tipos de texto. -->
+    <link href="https://fonts.cdnfonts.com/css/harabara-mais-demo" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/helvetica-255" rel="stylesheet">
+    @*@Scripts.Render("~/bundles/modernizr")*@
+
+</head>
+<body>
+     @using CapaEntidad;
+    <!-- Navbar Start -->
+    
+    <div class="container-menu">
+
+        <div class="container-fluid position-relative nav-bar p-0 ">
+            <div class="container-lg position-relative p-0 px-lg-3" style="z-index: 9;">
+                <nav class="navbar navbar-expand-lg bg-light navbar-light shadow-lg py-3 py-lg-0 pl-3 pl-lg-5 rounded">
+                    <button class="navbar-toggler order-1" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <a href="@Url.Action("Index", "Home")" class="navbar-brand mx-auto mx-lg-0 order-lg-0 d-none d-lg-block" title="Ir a inicio">
+                        <img src="~/Content/Imag/Logo_Galper_x.jpeg" alt="Logo" class="m-3 logo-img">
+                    </a>
+                    <div class="collapse navbar-collapse justify-content-end px-3 " id="navbarCollapse">
+                        <div class="navbar-nav ml-auto py-0 secondary-font-bold">
+
+                            @if (HttpContext.Current.Session["Usuario"] == null)
+                            {
+                                <!-- Menú para usuarios no autenticados -->
+                                <a href="@Url.Action("Index", "Home")" class="nav-item nav-link "><i class="fas fa-home"></i> Inicio</a>
+                                <a href="@Url.Action("Servicios", "Home")" class="nav-item nav-link"><i class="fa fa-ship"></i> Servicios</a>
+                                <a href="@Url.Action("Clientes", "Home")" class="nav-item nav-link"><i class="fas fa-handshake"></i> Clientes</a>
+                                <a href="@Url.Action("Sobre_Nosotros", "Home")" class="nav-item nav-link"><i class="fas fa-info-circle"></i> Nosotros</a>
+                                <a href="@Url.Action("Contact", "Home")" class="nav-item nav-link"><i class="fas fa-comments"></i> Contactanos</a>
+                                <a href="@Url.Action("Login", "Login")" class="btn btn-outline-success btn-tamaño"><i class="fas fa-sign-in-alt"></i> Inicia Sesión</a>
+                            }
+                            else
+                            {
+                                var usuario = HttpContext.Current.Session["Usuario"];
+
+                                if (usuario is Empleados _empleados && _empleados.Rol.NombreRol == "Administrador")
+                                {
+                                    <!-- Menú específico para Administradores -->
+                                    <a href="@Url.Action("ListaClientes", "Admin_Asesor")" class="nav-item nav-link"><i class="fas fa-handshake"></i> Clientes</a>
+                                    <a href="@Url.Action("SolicitudAsesor", "Admin_Asesor")" class="nav-item nav-link"><i class="fas fa-comments"></i> Solicitud Asesor</a>
+                                    <a href="@Url.Action("Index", "EmpleadoAdmin")" class="nav-item nav-link"><i class="fas fa-users"></i> Empleados</a>
+                                }
+                                else if (usuario is Empleados _asesor && _asesor.Rol.NombreRol == "Asesor")
+                                {
+
+                                    <!-- Menú específico para Asesores -->
+                                    <a href="@Url.Action("ListaClientes", "Admin_Asesor")" class="nav-item nav-link"><i class="fas fa-handshake"></i> Clientes</a>
+                                    <a href="@Url.Action("SolicitudAsesor", "Admin_Asesor")" class="nav-item nav-link"><i class="fas fa-comments"></i> Solicitud Asesor</a>
+                                }
+                                else if (usuario is Clientes _clientes && _clientes.Rol.NombreRol == "Cliente")
+                                {
+                                    <!-- Menú específico para Clientes -->
+                                }
+
+                                if (usuario is Empleados || usuario is Clientes)
+                                {
+                                    <!-- Elementos comunes para Administradores, Asesores y Clientes -->
+                                    <a href="@Url.Action("CerrarSesion", "Login")" class="btn btn-outline-danger btn-tamaño"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                                }
+                            }
+
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+
+    </div>
+    
+
+    <!-- Navbar End -->
+
+
+    <div class="container-fluid body-content" style="margin-top: 30px">
+
+        @RenderBody()
+
+        <footer>
+            <div class="container-fluid text-white-50 px-lg-0 rounded secondary-font-regular mt-5" style="background-color: #666666">
+                <div class="row pt-2 mt-4">
+                    <div class="col-lg-4 col-md-6 mb-5 text-center mx-auto">
+                        <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+                            <img src="~/Content/Imag/LogosEmpresa/Galpermex logotipo blanco.png" class="img-fluid" alt="" style="max-width: 100%; max-height: 100%;">
+                        </div>
+                        <a style="color: #ffffff" href="@Url.Action("avisoPrivaciodad", "avisoPrivacidad")">Aviso de privacidad</a>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 mb-5" style="color: #ffffff">
+                        <h1 class="text-white text-uppercase mb-1 secondary-font-bold text-center" style="letter-spacing: 6px;">
+                            <font style="vertical-align: inherit;">CONTÁCTENOS</font>
+                        </h1>
+                        <p class="d-flex">
+                            <i class="fa fa-envelope" style="margin-right: 10px;"></i>
+                            <span> servicios@galpermex.com.mx</span>
+                        </p>
+                        <p class="d-flex">
+                            <i class="fa fa-phone-alt" style="margin-right: 10px;"></i>
+                            <span>
+                                +52 833 706 42 32
+                            </span>
+                        </p>
+                        <p class="d-flex">
+                            <i class="fa fa-phone-alt mr-2" style="margin-right: 10px;"></i>
+                            <span>
+                                +52 833 706 42 61
+                            </span>
+                        </p>
+                        @if (HttpContext.Current.Session["Usuario"] == null)
+                         {
+                            <a href="@Url.Action("Contact", "Home")" class="btn btn-outline-info"><i class="fas fa-comments"></i> COMUNICATE CON UN ASESOR</a>
+                         }
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 mb-5 pt-5" style="color: #ffffff">
+                        <p class="d-flex">
+                            <i class="fa fa-map-marker-alt" style="margin-right: 10px;"></i>
+                            <span>
+                                Fimex, c15 #303D Fraccionamiento
+                                c.p. 89603 Altamira Tamaulipas
+                            </span>
+                        </p>
+                        <p class="d-flex">
+                            <i class="fab fa-facebook-square" style="margin-right: 10px;"></i>
+                            <span> galpermex</span>
+                        </p>
+                        <p class="d-flex">
+                            <i class="fas fa-globe" style="margin-right: 10px;"></i>
+                            <span> www.galpermex.com.mx</span>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/complementos")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

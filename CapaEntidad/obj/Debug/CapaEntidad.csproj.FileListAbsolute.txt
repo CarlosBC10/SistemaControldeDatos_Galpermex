@@ -1,0 +1,12 @@
+C:\Users\Mario\Desktop\9no semestre\Residencias\Proyeto web Residencias - GALPEMEX\PaginaWeb_Galpermex_V1.0\CapaEntidad\bin\Debug\CapaEntidad.dll
+C:\Users\Mario\Desktop\9no semestre\Residencias\Proyeto web Residencias - GALPEMEX\PaginaWeb_Galpermex_V1.0\CapaEntidad\bin\Debug\CapaEntidad.pdb
+C:\Users\Mario\Desktop\9no semestre\Residencias\Proyeto web Residencias - GALPEMEX\PaginaWeb_Galpermex_V1.0\CapaEntidad\obj\Debug\CapaEntidad.csproj.AssemblyReference.cache
+C:\Users\Mario\Desktop\9no semestre\Residencias\Proyeto web Residencias - GALPEMEX\PaginaWeb_Galpermex_V1.0\CapaEntidad\obj\Debug\CapaEntidad.csproj.CoreCompileInputs.cache
+C:\Users\Mario\Desktop\9no semestre\Residencias\Proyeto web Residencias - GALPEMEX\PaginaWeb_Galpermex_V1.0\CapaEntidad\obj\Debug\CapaEntidad.dll
+C:\Users\Mario\Desktop\9no semestre\Residencias\Proyeto web Residencias - GALPEMEX\PaginaWeb_Galpermex_V1.0\CapaEntidad\obj\Debug\CapaEntidad.pdb
+C:\Users\Mario\Desktop\9no semestre\Residencias\Proyeto web Residencias - GALPEMEX\Pagina Web Galpermex\PaginaWeb_Galpermex_V1.0\CapaEntidad\bin\Debug\CapaEntidad.dll
+C:\Users\Mario\Desktop\9no semestre\Residencias\Proyeto web Residencias - GALPEMEX\Pagina Web Galpermex\PaginaWeb_Galpermex_V1.0\CapaEntidad\bin\Debug\CapaEntidad.pdb
+C:\Users\Mario\Desktop\9no semestre\Residencias\Proyeto web Residencias - GALPEMEX\Pagina Web Galpermex\PaginaWeb_Galpermex_V1.0\CapaEntidad\obj\Debug\CapaEntidad.csproj.AssemblyReference.cache
+C:\Users\Mario\Desktop\9no semestre\Residencias\Proyeto web Residencias - GALPEMEX\Pagina Web Galpermex\PaginaWeb_Galpermex_V1.0\CapaEntidad\obj\Debug\CapaEntidad.csproj.CoreCompileInputs.cache
+C:\Users\Mario\Desktop\9no semestre\Residencias\Proyeto web Residencias - GALPEMEX\Pagina Web Galpermex\PaginaWeb_Galpermex_V1.0\CapaEntidad\obj\Debug\CapaEntidad.dll
+C:\Users\Mario\Desktop\9no semestre\Residencias\Proyeto web Residencias - GALPEMEX\Pagina Web Galpermex\PaginaWeb_Galpermex_V1.0\CapaEntidad\obj\Debug\CapaEntidad.pdb

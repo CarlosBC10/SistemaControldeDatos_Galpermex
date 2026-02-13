@@ -1,0 +1,383 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card secondary-font-regular">
+    <div class="card-header">
+        <i class="fas fa-users fa-lg m-1 secondary-font-bold"></i> Lista de Empleados
+    </div>
+
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <button type="button" class="btn btn-success" onclick="AbrirModalEmpleados(null)"><i class="fas fa-user-circle fa-lg m-1"></i>Registrar Nuevo</button>
+            </div>
+        </div>
+
+        <hr />
+
+        <table id="tablaEmpleados" class="display cell-border" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>telefono</th>
+                    <th>RFC</th>
+                    <th>Rol</th>
+                    <th>Fecha Registro</th>
+                    <th>Fecha Desactivacion</th>
+                    <th>Activo</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+<div class="modal fade" id="FormModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h1 class="modal-title fs-5" id="exampleModalLabel"><i class="fas fa-user fa-lg"></i> Registrar Empleado</h1>
+                <button type="button" class="btn-close bg-danger" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" id="txtID" value="0">
+
+                <form class="row g-3" id="formEmpleado">
+
+                    <div class="col-sm-6">
+                        <label for="exampleFormControlInput1" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="txtNombre" placeholder="Escriba su nombre" name="fname" required pattern="[A-Za-zÁÉÍÓÚáéíóú\s]+" title="El formato debe ser de solo letras" maxlength="160">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="exampleFormControlInput1" class="form-label">Apellidos</label>
+                        <input type="text" class="form-control" id="txtApellidos" placeholder="Escriba su nombre" name="fname" required pattern="[A-Za-zÁÉÍÓÚáéíóú\s]+" title="El formato debe ser de solo letras" maxlength="120">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="exampleFormControlInput1" class="form-label">RFC</label>
+                        <input type="text" class="form-control" id="txtRFC" maxlength="25" required>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="exampleFormControlInput1" class="form-label">Telefono</label>
+                        <input type="tel" class="form-control" id="txtTelefono" placeholder="Escriba su numero telefonico" name="telefono" required pattern="[0-9]{10}" title="El número de teléfono debe tener exactamente 10 dígitos">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="exampleFormControlInput1" class="form-label">Correo</label>
+                        <input type="email" class="form-control" id="txtEmail" placeholder="Escriba su correo electronico" name="email" required pattern="[a-zA-Z0-9._%+-]+\u0040[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" title="El formato debe ser de example@mail.com" maxlength="120">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="exampleFormControlInput1" class="form-label">Contraseña</label>
+                        <div class="input-group has-validation">
+                            <input type="password" class="form-control" id="txtPassword" required>
+                            <button class="btn btn-outline-secondary" type="button" id="btnTogglePassword">
+                                <i class="fa fa-eye" aria-hidden="true" style="font-size: 0.75em;"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <label for="exampleFormControlInput1" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="txtDireccion" required>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="exampleFormControlInput1" class="form-label">Rol</label>
+                        <select id="cboRol" class="form-select" required>
+                            <option selected>Seleccione un rol</option>
+                            <option value="2">Asesor</option>
+                            <option value="1">Administrador</option>
+                        </select>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="validarYGuardar()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+
+    <script>
+
+        var tablaData;
+        var filaSeleccionada;
+
+        tablaData = $("#tablaEmpleados").DataTable({
+
+            //responsive: true,
+            //ordering: false,
+            "ajax": {
+                url: '@Url.Action("ListarEmpleados","EmpleadoAdmin")',
+                type: "GET",
+                dataType: "json",
+            },
+            "columns": [
+                { "data": "EmpleadoID" },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return row.Nombre + ' ' + row.Apellidos;
+                    }
+                },
+                { "data": "Correo" },
+                { "data": "Telefono" },
+                { "data": "RFC" },
+                { "data": "Rol.NombreRol" },
+                {
+                    data: "FechaRegistro",
+                    render: function (data, type, row) {
+                        return moment(data).format("DD/MM/YYYY");
+                    }
+                },
+                {
+                    data: "FechaInactividad",
+                    render: function (data, type, row) {
+                        return moment(data).format("DD/MM/YYYY");
+                    }
+                },
+                {
+                    "data": "EsActivo", "render": function (valor) {
+                        if (valor) {
+                            return '<span class="badge rounded-pill bg-success btn-sm m-2">Activo</span>' +
+                                '<button type="button" class="btn btn-outline-danger btn-sm btn-inhabilitar"><i class="fas fa-minus-circle fa-lg m-1"></i>Inhabilitar</button>'
+                        } else {
+                            return '<span class="badge rounded-pill bg-danger btn-sm m-2">Inactivo</span>' +
+                                   '<button type="button" class="btn btn-outline-success btn-sm btn-habilitar"><i class="fas fa-plus-circle fa-lg m-1"></i>Habilitar</button>'
+                        }
+
+                    }
+                },
+                {
+                    "defaultContent": '<button type="button" class="btn btn-primary btn-sm btn-editar"><i class="fas fa-pen fa-lg"></i></button>' +
+                                      '<button type="button" class="btn btn-info btn-sm btn-conexiones ms-2"><i class="fas fa-clock fa-lg" style="color: #ffffff"></i></button>' +
+                                      '<button type="button" class="btn btn-secondary btn-sm ms-2"><i class="fas fa-tasks fa-lg" style="color: #ffffff"></i></button>',
+                    "orderable" : false,
+                    "searchable" : false,
+                    "width": "113px"
+                }
+            ],
+
+            "language": {
+                "url": '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
+            },
+
+        });
+
+        function AbrirModalEmpleados(json) {
+
+            $("#txtID").val(0);
+            $("#txtNombre").val("");
+            $("#txtApellidos").val("");
+            $("#txtRFC").val("");
+            $("#txtTelefono").val("");
+            $("#txtDireccion").val("");
+            $("#txtEmail").val("");
+            $("#txtPassword").val("");
+            $("#cboRol").val(1);
+
+            if (json != null) {
+                $("#txtID").val(json.EmpleadoID);
+                $("#txtNombre").val(json.Nombre);
+                $("#txtApellidos").val(json.Apellidos);
+                $("#txtRFC").val(json.RFC);
+                $("#txtTelefono").val(json.Telefono);
+                $("#txtDireccion").val(json.Direccion);
+                $("#txtEmail").val(json.Correo);
+                $("#txtPassword").val(json.Contraseña);
+                $("#cboRol").val(json.Rol.RolID == true ? 1 : 2);
+            }
+
+            $('#FormModal').modal("show");
+
+        }
+
+        $("#tablaEmpleados tbody").on("click", '.btn-editar', function () {
+
+            filaSeleccionada = $(this).closest("tr");
+
+            var data = tablaData.row(filaSeleccionada).data();
+
+            AbrirModalEmpleados(data)
+        })
+
+        function Guardar() {
+            var Empleado = {
+
+                empleadoid: $("#txtID").val(),
+                    nombre: $("#txtNombre").val(),
+                 apellidos: $("#txtApellidos").val(),
+                rfc: $("#txtRFC").val(),
+                direccion: $("#txtDireccion").val(),
+                  telefono: $("#txtTelefono").val(),
+                    correo: $("#txtEmail").val(),
+                contraseña: $("#txtPassword").val(),
+                       rol: {
+                            RolID: $("#cboRol").val()
+                       }
+            }
+
+            jQuery.ajax({
+                url: '@Url.Action("GuardarEmpleado", "EmpleadoAdmin")',
+                type: "POST",
+                data: JSON.stringify({ objeto: Empleado }),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    //Nuevo Empleado
+                    if (Empleado.empleadoid == 0) {
+                        if (data.resultado != 0) {
+                            Empleado.empleadoid = data.resultado;
+                            Empleado.rol.RolID = Empleado.rol;
+                            $('#FormModal').modal("hide");
+                        } else {
+                            alert(data.Mensaje);
+                        }
+                    } else {
+                        if (data.resultado != 0) {
+                            filaSeleccionada == null;
+                            $('#FormModal').modal("hide");
+                        } else {
+                            alert(data.Mensaje);
+                        }
+                    }
+                },
+                error: function (error) {
+                    console.log(error)
+                },
+                beforeSend: function () {
+
+                },
+                complete: function () {
+                    // Recargar los datos de la DataTable después de la llamada AJAX completa
+                    tablaData.ajax.reload();
+                }
+            });
+        }
+
+        $("#tablaEmpleados tbody").on("click", '.btn-conexiones', function () {
+        filaSeleccionada = $(this).closest("tr");
+        var data = tablaData.row(filaSeleccionada).data();
+
+        // Redirige a la vista de conexiones con el ID del empleado seleccionado
+        window.location.href = '@Url.Action("Conexiones", "EmpleadoAdmin")?empleadoID=' + data.EmpleadoID;
+        });
+
+        function validarYGuardar() {
+            var form = document.getElementById('formEmpleado');
+            if (form.checkValidity()) {
+                Guardar();
+            } else {
+                form.reportValidity();
+            }
+        }
+
+    </script>
+
+    <script>
+
+        //Funcion para Inhabilitar
+        $("#tablaEmpleados tbody").on("click", '.btn-inhabilitar', function () {
+            // Obtener la fila seleccionada
+            filaSeleccionada = $(this).closest("tr");
+            var data = tablaData.row(filaSeleccionada).data();
+
+            // Confirmar la acción antes de ejecutarla
+            if (confirm("¿Estás seguro de que deseas inhabilitar a este empleado?")) {
+                // Ejecutar el método InhabilitarEmpleado
+                $.ajax({
+                    url: '@Url.Action("InhabilitarEmpleado", "EmpleadoAdmin")',
+                    type: "POST",
+                    data: { id: data.EmpleadoID },
+                    success: function (response) {
+                        // Actualizar la tabla después de la inhabilitación
+                        tablaData.ajax.reload();
+                        // Aquí puedes mostrar algún mensaje de éxito si lo deseas
+                        alert("Empleado inhabilitado correctamente.");
+                    },
+                    error: function (error) {
+                        // Manejar errores de la llamada AJAX si es necesario
+                        console.error("Error al inhabilitar empleado:", error);
+                        alert("Error al inhabilitar empleado. Por favor, inténtalo de nuevo.");
+                    }
+                });
+            }
+        });
+
+    </script>
+
+    <script>
+
+        //Funcion para Inhabilitar
+        $("#tablaEmpleados tbody").on("click", '.btn-habilitar', function () {
+            // Obtener la fila seleccionada
+            filaSeleccionada = $(this).closest("tr");
+            var data = tablaData.row(filaSeleccionada).data();
+
+            // Confirmar la acción antes de ejecutarla
+            if (confirm("¿Estás seguro de que deseas habilitar a este empleado?")) {
+                // Ejecutar el método InhabilitarEmpleado
+                $.ajax({
+                    url: '@Url.Action("HabilitarEmpleado", "EmpleadoAdmin")',
+                    type: "POST",
+                    data: { id: data.EmpleadoID },
+                    success: function (response) {
+                        // Actualizar la tabla después de la inhabilitación
+                        tablaData.ajax.reload();
+                        // Aquí puedes mostrar algún mensaje de éxito si lo deseas
+                        alert("Empleado Habilitado correctamente.");
+                    },
+                    error: function (error) {
+                        // Manejar errores de la llamada AJAX si es necesario
+                        console.error("Error al inhabilitar empleado:", error);
+                        alert("Error al Habilitar empleado. Por favor, inténtalo de nuevo.");
+                    }
+                });
+            }
+        });
+
+    </script>
+
+    <script>
+        // este es para el efecto viusal para ver o no la contradeña.
+        document.getElementById('btnTogglePassword').addEventListener('click', function () {
+            var passwordInput = document.getElementById('txtPassword');
+            var btnTogglePassword = document.getElementById('btnTogglePassword');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                btnTogglePassword.innerHTML = '<i class="fa fa-eye-slash" aria-hidden="true"></i>';
+            } else {
+                passwordInput.type = 'password';
+                btnTogglePassword.innerHTML = '<i class="fa fa-eye" aria-hidden="true"></i>';
+            }
+        });
+    </script>
+
+    
+}
+
+

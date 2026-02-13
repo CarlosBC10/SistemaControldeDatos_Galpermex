@@ -1,0 +1,21 @@
+﻿
+@using CapaEntidad;
+@using System.Web;
+@{
+    ViewBag.Title = "Bievenida";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+
+    var usuario = HttpContext.Current.Session["Usuario"];
+}
+
+@if (usuario is Empleados || usuario is Clientes)
+{
+    <h1 class="secondary-font-bold" style="color: #ffffff">Bienvenido(a), @(usuario is Empleados ? ((Empleados)usuario).Nombre + " " + ((Empleados)usuario).Apellidos : ((Clientes)usuario).Nombre + " " + ((Clientes)usuario).Apellidos).</h1>
+}
+else
+{
+    <h2>Error, al recuperar usuario</h2>
+}

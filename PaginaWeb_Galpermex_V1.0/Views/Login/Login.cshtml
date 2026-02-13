@@ -1,0 +1,95 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <link rel="icon" type="image/png" href="~/Content/Imag/LogosEmpresa/Icono Galpermex.png">
+    @Styles.Render("~/Content/css")
+</head>
+
+<body id="estilo-body">
+
+    <div class="container" id="container-login">
+        <div class="container h-100">
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <div class="user_card">
+                    <div class="d-flex justify-content-center">
+                        <div class="brand_logo_container">
+                            <a href="@Url.Action("Index", "Home")" title="Ir a inicio">
+                                <img src="~/Content/Imag/LogosEmpresa/Icono Galpermex_Grande.png" class="brand_logo" alt="Logo">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center form_container">
+
+                        <form class="p-5" action="@Url.Action("Login", "Login")" method="post">
+
+                            <div class="input-group mb-3">
+                                <select class="form-select" name="Rol">
+                                    <option selected>Seleccione un rol</option>
+                                    <option value="Corporativo">Corporativo</option>
+                                    <option value="Cliente">Cliente</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group mb-3 align-items-center">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                </div>
+                                <input type="email" class="form-control input_user" name="Correo" placeholder="Introdusca su correo" required pattern="[a-zA-Z0-9._%+-]+\u0040[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" title="El formato debe ser de example@mail.com">
+                            </div>
+
+                            <div class="input-group mb-2">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                </div>
+                                <input type="password" name="Contraseña" class="form-control input_pass" placeholder="Ingrese su contraseña" required title="Debe ingresar su contraseña">
+                            </div>
+                            @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+                            {
+                                <div class="alert alert-danger" role="alert">
+                                    @ViewBag.ErrorMessage
+                                </div>
+                            }
+                            <div class="d-flex justify-content-center mt-3 login_container">
+                                <button type="submit" name="button" class="btn login_btn">Accesar</button>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+
+
+    
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/complementos")
+
+    <script>
+        // Agregar un script para mostrar la alerta si hay un mensaje de error
+        $(document).ready(function () {
+            var errorMessage = '@ViewBag.ErrorMessage';
+
+        });
+
+
+    </script>
+
+</body>
+</html>
